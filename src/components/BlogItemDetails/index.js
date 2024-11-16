@@ -7,27 +7,27 @@ const BlogItemDetails = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    getBlogItemData();
-  }, [id]); // Re-run the effect if the `id` changes
+    const fetchBlogData = async () => {
+      console.log(`Fetching blog data for ID: ${id}`);
+      try {
+        const response = await fetch(`https://apis.ccbp.in/blogs/${id}`);
+        const data = await response.json();
+        const formattedData = {
+          id: data.id,
+          title: data.title,
+          imageUrl: data.image_url,
+          avatarUrl: data.avatar_url,
+          author: data.author,
+          content: data.content,
+        };
+        setBlogData(formattedData);
+      } catch (error) {
+        console.error('Error fetching blog data:', error);
+      }
+    };
 
-  const getBlogItemData = async () => {
-    console.log(`Fetching blog data for ID: ${id}`);
-    try {
-      const response = await fetch(`https://apis.ccbp.in/blogs/${id}`);
-      const data = await response.json();
-      const formattedData = {
-        id: data.id,
-        title: data.title,
-        imageUrl: data.image_url,
-        avatarUrl: data.avatar_url,
-        author: data.author,
-        content: data.content,
-      };
-      setBlogData(formattedData);
-    } catch (error) {
-      console.error('Error fetching blog data:', error);
-    }
-  };
+    fetchBlogData();
+  }, [id]); // Include `id` in the dependency array to refetch on ID change
 
   // Display a loader if the data is not yet available
   if (!blogData) {
